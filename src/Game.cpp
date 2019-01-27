@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false)
+Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false), displayReplay(false)
 {
 	window.create(sf::VideoMode(640, 480), "Connect Four", sf::Style::Close);
 
@@ -10,6 +10,10 @@ Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne),
 	winnerText.setFillColor(sf::Color::Magenta);
 	winnerText.setString("Player wins!");
 	winnerText.setCharacterSize(70);
+
+	graphicTexture.loadFromFile("graphic.png");
+	graphicSprite.setTexture(graphicTexture);
+	graphicSprite.setPosition(-3, -2);
 }
 
 void Game::start()
@@ -30,6 +34,12 @@ void Game::start()
 				{
 					someoneWon = false;
 					board.resetBoard();
+					replayGame.resetMoves();
+				}
+				else if(someoneWon && evnt.key.code == sf::Keyboard::N)
+				{
+					displayReplay = true;
+					board.resetBoard();
 				}
 				break;
 			case sf::Event::MouseButtonPressed:
@@ -49,7 +59,8 @@ void Game::draw()
 {
 	window.clear();
 	board.draw(window);
-	if (someoneWon)
+	window.draw(graphicSprite);
+	if (someoneWon && !displayReplay)
 	{
 		window.draw(winnerText);
 	}
@@ -69,8 +80,10 @@ void Game::updateGame(float xMousePos, float yMousePos)
 	//gets the index of the column the player clicked on
 	int columnIdx = static_cast<int>(xMousePos / COLUMN_WIDTH);
 
-	if (!someoneWon && board.dropDisc(columnIdx, currentPlayer->getPlayerColor()))
+	if (!someoneWon && !displayReplay && board.dropDisc(columnIdx, currentPlayer->getPlayerColor()))
 	{
+		replayGame.addMove(columnIdx, currentPlayer->getPlayerColor());
+
 		if (board.checkForWinner(columnIdx, currentPlayer->getPlayerColor()))
 		{
 			someoneWon = true;
@@ -84,6 +97,18 @@ void Game::updateGame(float xMousePos, float yMousePos)
 		else
 		{
 			switchPlayer();
+		}
+	}
+	else if (displayReplay)
+	{
+		if (!replayGame.lastMove())
+		{
+			std::pair<int, sf::Color> discData = replayGame.getNextMove();
+			board.dropDisc(discData.first, discData.second);
+		}
+		else
+		{
+			displayReplay = false;
 		}
 	}
 }

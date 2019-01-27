@@ -7,6 +7,7 @@
 
 #include "Board.h"
 #include "Player.h"
+#include "ReplayGame.h"
 
 class Game
 {
@@ -26,16 +27,22 @@ private:
 	void updateGame(float xMousePos, float yMousePos);
 
 	sf::RenderWindow window;
+
 	Board board;
+	ReplayGame replayGame;
 
 	Player playerOne;
 	Player playerTwo;
 	Player *currentPlayer;
 
 	bool someoneWon;
+	bool displayReplay;
 
 	sf::Font winnerFont;
 	sf::Text winnerText;
+
+	sf::Texture graphicTexture;
+	sf::Sprite graphicSprite;
 
 	const float COLUMN_WIDTH = 91.4f;
 	const float COLUMN_HEIGHT = 80.f;
