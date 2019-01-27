@@ -21,14 +21,8 @@ public:
 
 	~ReplayGame();
 private:
-	struct discPlaceData
-	{
-		int columnIdx;
-		sf::Color playerColor;
-	};
-
-	std::vector<discPlaceData*> movesPlayed;
-	std::vector<discPlaceData*>::const_iterator movesIter;
+	std::vector<std::pair<int, sf::Color>> movesPlayed;
+	std::vector<std::pair<int, sf::Color>>::const_iterator movesIter;
 };
 
 #endif
