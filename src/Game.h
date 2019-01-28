@@ -2,12 +2,12 @@
 #define CONNECTFOURGAME_H
 
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
 
 #include "Board.h"
 #include "Player.h"
 #include "ReplayGame.h"
+#include "EnemyBot.h"
 
 class Game
 {
@@ -30,6 +30,7 @@ private:
 
 	Board board;
 	ReplayGame replayGame;
+	EnemyBot enemyBot;
 
 	Player playerOne;
 	Player playerTwo;

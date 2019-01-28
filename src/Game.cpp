@@ -6,8 +6,8 @@ Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne),
 
 	winnerFont.loadFromFile("arial.ttf");
 	winnerText.setFont(winnerFont);
-	winnerText.setPosition(125, 100);
-	winnerText.setFillColor(sf::Color::Magenta);
+	winnerText.setPosition(0, 60);
+	winnerText.setFillColor(sf::Color::Color(255, 124, 31, 255)); //orange color
 	winnerText.setString("Player wins!");
 	winnerText.setCharacterSize(70);
 
@@ -89,9 +89,9 @@ void Game::updateGame(float xMousePos, float yMousePos)
 			someoneWon = true;
 
 			if (currentPlayer == &playerOne)
-				winnerText.setString("Red Wins!\n Press R to\n play again");
+				winnerText.setString("Red Wins! Press R\nto play again Press \nN to replay the\nmatch.");
 			else
-				winnerText.setString("Yellow Wins!\n Press R to\n play again");
+				winnerText.setString("Yellow Wins! Press \nR to play again\nPress N to replay\nthe match.");
 
 		}
 		else
