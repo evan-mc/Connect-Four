@@ -38,6 +38,7 @@ private:
 
 	bool someoneWon;
 	bool displayReplay;
+	bool botTurn;
 
 	sf::Font winnerFont;
 	sf::Text winnerText;

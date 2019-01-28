@@ -1,6 +1,6 @@
 #include "Game.h"
 
-Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false), displayReplay(false)
+Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false), displayReplay(false), botTurn(false)
 {
 	window.create(sf::VideoMode(640, 480), "Connect Four", sf::Style::Close);
 
@@ -51,6 +51,21 @@ void Game::start()
 				break;
 			}
 		}
+
+		if (botTurn)
+		{
+			int columnIdx = enemyBot.playMove();
+			if (board.dropDisc(columnIdx, sf::Color::Yellow))
+			{
+				replayGame.addMove(columnIdx, sf::Color::Yellow);
+				botTurn = false;
+				if (board.checkForWinner(columnIdx, sf::Color::Yellow))
+				{
+					someoneWon = true;
+					winnerText.setString("Yellow Wins! Press \nR to play again\nPress N to replay\nthe match.");
+				}
+			}
+		}
 		draw();
 	}
 }
@@ -80,13 +95,16 @@ void Game::updateGame(float xMousePos, float yMousePos)
 	//gets the index of the column the player clicked on
 	int columnIdx = static_cast<int>(xMousePos / COLUMN_WIDTH);
 
-	if (!someoneWon && !displayReplay && board.dropDisc(columnIdx, currentPlayer->getPlayerColor()))
+	if (!someoneWon && !displayReplay && !botTurn && board.dropDisc(columnIdx, currentPlayer->getPlayerColor()))
 	{
 		replayGame.addMove(columnIdx, currentPlayer->getPlayerColor());
+		
+		botTurn = true;
 
 		if (board.checkForWinner(columnIdx, currentPlayer->getPlayerColor()))
 		{
 			someoneWon = true;
+			botTurn = false;
 
 			if (currentPlayer == &playerOne)
 				winnerText.setString("Red Wins! Press R\nto play again Press \nN to replay the\nmatch.");
@@ -96,7 +114,7 @@ void Game::updateGame(float xMousePos, float yMousePos)
 		}
 		else
 		{
-			switchPlayer();
+			//switchPlayer();
 		}
 	}
 	else if (displayReplay)
