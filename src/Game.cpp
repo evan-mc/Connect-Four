@@ -1,9 +1,7 @@
 #include "Game.h"
 
-Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false), displayReplay(false), botTurn(false)
+Game::Game(bool vsPlayerParam) : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false), displayReplay(false), botTurn(false)
 {
-	window.create(sf::VideoMode(640, 480), "Connect Four", sf::Style::Close);
-
 	winnerFont.loadFromFile("arial.ttf");
 	winnerText.setFont(winnerFont);
 	winnerText.setPosition(0, 60);
@@ -14,9 +12,11 @@ Game::Game() : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne),
 	graphicTexture.loadFromFile("graphic.png");
 	graphicSprite.setTexture(graphicTexture);
 	graphicSprite.setPosition(-3, -2);
+
+	vsPlayer = vsPlayerParam;
 }
 
-void Game::start()
+int Game::run(sf::RenderWindow& window)
 {
 	while (window.isOpen())
 	{
@@ -52,7 +52,7 @@ void Game::start()
 			}
 		}
 
-		if (botTurn)
+		if (botTurn && !vsPlayer)
 		{
 			int columnIdx = enemyBot.playMove();
 			if (board.dropDisc(columnIdx, sf::Color::Yellow))
@@ -66,11 +66,13 @@ void Game::start()
 				}
 			}
 		}
-		draw();
+		draw(window);
 	}
+
+	return 0;
 }
 
-void Game::draw()
+void Game::draw(sf::RenderWindow& window)
 {
 	window.clear();
 	board.draw(window);
@@ -99,7 +101,10 @@ void Game::updateGame(float xMousePos, float yMousePos)
 	{
 		replayGame.addMove(columnIdx, currentPlayer->getPlayerColor());
 		
-		botTurn = true;
+		if (!vsPlayer) //only lets the bot play if we are in the vsBot mode
+		{
+			botTurn = true;
+		}
 
 		if (board.checkForWinner(columnIdx, currentPlayer->getPlayerColor()))
 		{
@@ -112,9 +117,9 @@ void Game::updateGame(float xMousePos, float yMousePos)
 				winnerText.setString("Yellow Wins! Press \nR to play again\nPress N to replay\nthe match.");
 
 		}
-		else
+		else if(vsPlayer)
 		{
-			//switchPlayer();
+			switchPlayer();
 		}
 	}
 	else if (displayReplay)

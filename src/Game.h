@@ -4,29 +4,28 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+#include "Screen.h"
 #include "Board.h"
 #include "Player.h"
 #include "ReplayGame.h"
 #include "EnemyBot.h"
 
-class Game
+class Game : public Screen
 {
 public:
-	Game();
+	Game(bool vsPlayerParam);
 
 	//the main loop of the game
-	void start();
+	virtual int run(sf::RenderWindow& window);
 
 	~Game();
 private:
 	//draws all the relevant items to the screen
-	void draw();
+	void draw(sf::RenderWindow& window);
 
 	void switchPlayer();
 
 	void updateGame(float xMousePos, float yMousePos);
-
-	sf::RenderWindow window;
 
 	Board board;
 	ReplayGame replayGame;
@@ -39,6 +38,7 @@ private:
 	bool someoneWon;
 	bool displayReplay;
 	bool botTurn;
+	bool vsPlayer;
 
 	sf::Font winnerFont;
 	sf::Text winnerText;
