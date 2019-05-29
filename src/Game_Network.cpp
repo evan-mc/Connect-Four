@@ -23,7 +23,7 @@ int Game_Network::run(sf::RenderWindow& window)
 	sf::Uint16 num;
 	if (connection == 'c')
 	{
-		sf::Socket::Status status = socket.connect("192.168.1.17", 53000);
+		sf::Socket::Status status = socket.connect("localhost", 53000);
 		if (status != sf::Socket::Done)
 		{
 			std::cout << "couldn't connect to server\n";
