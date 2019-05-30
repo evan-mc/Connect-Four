@@ -47,7 +47,6 @@ private:
 	sf::Sprite graphicSprite;
 
 	const float COLUMN_WIDTH = 91.4f;
-	const float COLUMN_HEIGHT = 80.f;
 };
 
 #endif

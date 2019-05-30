@@ -17,6 +17,8 @@ private:
 	sf::Font gameFont;
 	sf::Text playLocal;
 	sf::Text playBot;
+	sf::Text playOnlineServer;
+	sf::Text playOnlineClient;
 
 };
 

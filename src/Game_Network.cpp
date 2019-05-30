@@ -1,6 +1,6 @@
 #include "Game_Network.h"
 
-Game_Network::Game_Network(char input) : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false), displayReplay(false), botTurn(false)
+Game_Network::Game_Network(char input, const std::string& ipParam) : playerOne("Red"), playerTwo("Yellow"), currentPlayer(&playerOne), someoneWon(false), displayReplay(false)
 {
 	winnerFont.loadFromFile("arial.ttf");
 	winnerText.setFont(winnerFont);
@@ -14,6 +14,7 @@ Game_Network::Game_Network(char input) : playerOne("Red"), playerTwo("Yellow"), 
 	graphicSprite.setPosition(-3, -2);
 
 	connection = input;
+	ip = ipParam;
 }
 
 int Game_Network::run(sf::RenderWindow& window)
@@ -23,7 +24,7 @@ int Game_Network::run(sf::RenderWindow& window)
 	sf::Uint16 num;
 	if (connection == 'c')
 	{
-		sf::Socket::Status status = socket.connect("localhost", 53000);
+		sf::Socket::Status status = socket.connect(ip, 53000);
 		if (status != sf::Socket::Done)
 		{
 			std::cout << "couldn't connect to server\n";
@@ -83,8 +84,9 @@ int Game_Network::run(sf::RenderWindow& window)
 				break;
 			}
 		}
+
 		draw(window);
-		if (num == 1)
+		if (num == 1) //accepts the incoming players choice and displays it
 		{
 			if (connection == 'c')
 			{
@@ -123,18 +125,14 @@ void Game_Network::switchPlayer()
 bool Game_Network::updateGame(int columnIdx)
 {
 	bool droppedDisc = false;
-	std::cout << " a\n";
-	if (!someoneWon && !displayReplay && !botTurn && board.dropDisc(columnIdx, currentPlayer->getPlayerColor()))
+	if (!someoneWon && !displayReplay && board.dropDisc(columnIdx, currentPlayer->getPlayerColor()))
 	{
 		droppedDisc = true;
 		replayGame.addMove(columnIdx, currentPlayer->getPlayerColor());
 
-		std::cout << "b\n";
 		if (board.checkForWinner(columnIdx, currentPlayer->getPlayerColor()))
 		{
 			someoneWon = true;
-			botTurn = false;
-			std::cout << "c\n";
 			if (currentPlayer == &playerOne)
 				winnerText.setString("Red Wins! Press R\nto play again Press \nN to replay the\nmatch.");
 			else
@@ -205,12 +203,10 @@ void Game_Network::runServer(sf::Uint16& num, sf::RenderWindow& window)
 
 		//gets the index of the column the player clicked on
 		int columnIdx = static_cast<int>(coord_pos.x / COLUMN_WIDTH);
-		std::cout << "placing on idx " << columnIdx;
 
 		if (updateGame(columnIdx))
 		{
 			sf::Uint16 columnIdxSend = columnIdx;
-			std::cout << "columnIdx: " << columnIdx << " columnIdxSend: " << columnIdxSend << "\n";
 
 			packet2 << columnIdxSend;
 			client.send(packet2);
@@ -218,7 +214,6 @@ void Game_Network::runServer(sf::Uint16& num, sf::RenderWindow& window)
 			switchPlayer();
 
 			--num;
-			std::cout << "num after sending(should be 1): " << num << "\n";
 		}
 	}
 	else
@@ -227,12 +222,10 @@ void Game_Network::runServer(sf::Uint16& num, sf::RenderWindow& window)
 
 		sf::Uint16 columnIdx1;
 		packet1 >> columnIdx1;
-		std::cout << "idx received: " << columnIdx1 << "\n";
 		updateGame(columnIdx1);
 		switchPlayer();
 
 		++num;
-		std::cout << "num after receiving(should be 2): " << num << "\n";
 	}
 }
 

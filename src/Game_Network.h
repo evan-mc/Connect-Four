@@ -1,20 +1,21 @@
 #ifndef CONNECTFOURGAMENETWORK_H
 #define CONNECTFOURGAMENETWORK_H
 
+#include <iostream>
+#include <string>
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-#include <iostream>
 
 #include "Screen.h"
 #include "Board.h"
 #include "Player.h"
 #include "ReplayGame.h"
-#include "EnemyBot.h"
 
 class Game_Network : public Screen
 {
 public:
-	Game_Network(char input);
+	Game_Network(char input, const std::string& ipParam);
 
 	//the main loop of the game
 	virtual int run(sf::RenderWindow& window);
@@ -33,15 +34,13 @@ private:
 
 	Board board;
 	ReplayGame replayGame;
-	EnemyBot enemyBot;
 
 	Player playerOne;
 	Player playerTwo;
 	Player *currentPlayer;
 
-	bool someoneWon;
 	bool displayReplay;
-	bool botTurn;
+	bool someoneWon;
 
 	sf::Font winnerFont;
 	sf::Text winnerText;
@@ -56,6 +55,7 @@ private:
 	sf::TcpSocket client;
 
 	char connection;
+	std::string ip;
 
 	const float COLUMN_WIDTH = 91.4f;
 	const float COLUMN_HEIGHT = 80.f;
